@@ -1,24 +1,24 @@
 #include "board.h"
 #include <random>
 #include <iostream>
+#include <algorithm>
 
 std::ostream &operator<<(std::ostream &stream, Cell obj) {
   if (obj.visible) {
     if (obj.has_bomb) {
       stream << '*';
     } else {
-      stream << ' ';
+      stream << obj.adjacent;
     }
   } else {
     if (obj.has_bomb) {
       stream << '+';
     } else {
-      stream << '?';
+      stream << obj.adjacent;
     }
   }
   return stream;
 }
-
 
 Board::Board(const unsigned x_size, const unsigned y_size, const unsigned bombs) {
   if (bombs >= x_size * y_size) {
@@ -46,6 +46,14 @@ void Board::populate() {
     } while(this->cell_at(x, y).has_bomb);
     this->cell_at(x, y).has_bomb = true;
   }
+
+  for (auto y = 0; y < this->y_size; y++) {
+    for (auto x = 0; x < this->x_size; x++) {
+      if (!this->cell_at(x, y).has_bomb) {
+	this->cell_at(x, y).adjacent = this->calc_adjacent(x, y);
+      }
+    }
+  }
 }
 
 Cell & Board::cell_at(const unsigned x, const unsigned y) {
@@ -60,4 +68,22 @@ std::ostream &operator<<(std::ostream &stream, Board obj) {
     stream << std::endl;
   }
   return stream;
+}
+
+unsigned Board::calc_adjacent(unsigned ux, unsigned uy) {
+  auto adj = 0;
+  auto x = (int)ux;
+  auto y = (int)uy;
+  for (auto i = std::max(y - 1, 0); i <= std::min(y + 1, (int)this->y_size - 1); i++) {
+    for (auto j = std::max(x - 1, 0); j <= std::min(x + 1, (int)this->y_size - 1); j++) {
+      if (this->cell_at(j, i).has_bomb) {
+	adj++;
+      }
+    }
+  }
+  return adj;
+}
+
+bool Board::click(unsigned x, unsigned y) {
+  return false;
 }

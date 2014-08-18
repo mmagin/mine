@@ -3,7 +3,7 @@
 #include <iostream>
 
 int main() {
-  Board board(5, 5, 5);
+  Board board(10, 10, 10);
   std::cout << board << std::endl;
 
   return EXIT_SUCCESS;
