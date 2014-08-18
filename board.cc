@@ -5,17 +5,13 @@
 
 std::ostream &operator<<(std::ostream &stream, Cell obj) {
   if (obj.visible) {
-    if (obj.has_bomb) {
-      stream << '*';
-    } else {
+    if (obj.adjacent > 0) {
       stream << obj.adjacent;
+    } else {
+      stream << ' ';
     }
   } else {
-    if (obj.has_bomb) {
-      stream << '+';
-    } else {
-      stream << obj.adjacent;
-    }
+    stream << '.';
   }
   return stream;
 }
@@ -85,5 +81,12 @@ unsigned Board::calc_adjacent(unsigned ux, unsigned uy) {
 }
 
 bool Board::click(unsigned x, unsigned y) {
-  return false;
+  Cell &c = this->cell_at(x, y);
+
+  if (c.has_bomb) {
+    return false;
+  }
+
+  c.visible = true;
+  return true;
 }
