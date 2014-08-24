@@ -80,6 +80,20 @@ unsigned Board::calc_adjacent(unsigned ux, unsigned uy) {
   return adj;
 }
 
+// this algorithm is wrong
+void Board::expand(const unsigned ux, const unsigned uy) {
+  this->cell_at(ux, uy).visible = true;
+  auto x = (int)ux;
+  auto y = (int)uy;
+  for (auto i = std::max(y - 1, 0); i <= std::min(y + 1, (int)this->y_size - 1); i++) {
+    for (auto j = std::max(x - 1, 0); j <= std::min(x + 1, (int)this->y_size - 1); j++) {
+      if (!this->cell_at(j, i).has_bomb && !this->cell_at(j, i).visible) {
+	this->expand(j, i);
+      }
+    }
+  }
+}
+
 bool Board::click(unsigned x, unsigned y) {
   Cell &c = this->cell_at(x, y);
 
@@ -87,6 +101,7 @@ bool Board::click(unsigned x, unsigned y) {
     return false;
   }
 
-  c.visible = true;
+  this->expand(x, y);
   return true;
 }
+
