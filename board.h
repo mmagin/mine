@@ -21,6 +21,7 @@ public:
 
 protected:
   void expand(const unsigned x, const unsigned y);
+  void inner_expand(const unsigned x, const unsigned y);
   void populate();
   unsigned calc_adjacent(unsigned x, unsigned y);
   unsigned x_size, y_size, bombs;

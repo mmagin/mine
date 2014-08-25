@@ -71,7 +71,7 @@ unsigned Board::calc_adjacent(unsigned ux, unsigned uy) {
   auto x = (int)ux;
   auto y = (int)uy;
   for (auto i = std::max(y - 1, 0); i <= std::min(y + 1, (int)this->y_size - 1); i++) {
-    for (auto j = std::max(x - 1, 0); j <= std::min(x + 1, (int)this->y_size - 1); j++) {
+    for (auto j = std::max(x - 1, 0); j <= std::min(x + 1, (int)this->x_size - 1); j++) {
       if (this->cell_at(j, i).has_bomb) {
 	adj++;
       }
@@ -84,15 +84,21 @@ unsigned Board::calc_adjacent(unsigned ux, unsigned uy) {
 void Board::expand(const unsigned ux, const unsigned uy) {
   auto x = (int)ux;
   auto y = (int)uy;
-  for (auto i = std::max(y - 1, 0); i <= std::min(y + 1, (int)this->y_size - 1); i++) {
-    for (auto j = std::max(x - 1, 0); j <= std::min(x + 1, (int)this->y_size - 1); j++) {
-      Cell &c = this->cell_at(j, i);
-      if (!c.visible && !c.has_bomb) {
-	c.visible = true;
-	if (c.adjacent == 0) {
-	  this->expand(j, i);
-	}
-      }
+
+  this->inner_expand(x, std::max(y - 1, 0));
+  this->inner_expand(x, std::min(y + 1, (int)this->y_size - 1));
+  
+  this->inner_expand(std::max(x - 1, 0), y);
+  this->inner_expand(std::min(x + 1, (int)this->x_size - 1), y);
+}
+
+
+void Board::inner_expand(const unsigned x, const unsigned y) {
+  Cell &c = this->cell_at(x, y);
+  if (!c.visible && !c.has_bomb) {
+    c.visible = true;
+    if (c.adjacent == 0) {
+      this->expand(x, y);
     }
   }
 }
